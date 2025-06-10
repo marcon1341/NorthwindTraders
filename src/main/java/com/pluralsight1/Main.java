@@ -1,22 +1,24 @@
 package com.pluralsight1;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Scanner;
 
 public class Main {
 
-    private static final String JDBC_URL =
-            "jdbc:mysql://localhost:3306/northwind?useSSL=false"
-                    + "&allowPublicKeyRetrieval=true"
-                    + "&serverTimezone=UTC";
-
-    private static final String DB_USER = "root";
-    private static final String DB_PASS = "Msy.1341";//Mysql pass
+//    private static final String JDBC_URL =
+//            "jdbc:mysql://localhost:3306/northwind?useSSL=false"
+//                    + "&allowPublicKeyRetrieval=true"
+//                    + "&serverTimezone=UTC";
+//
+//    private static final String DB_USER = "root";
+//    private static final String DB_PASS = "Msy.1341";//Mysql pass
 
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
         boolean running = true;
 
+        DataSource ds = DataSourceFactory.getDataSource();
         while (running) {
             System.out.println("""
                     What do you want to do?
@@ -30,13 +32,13 @@ public class Main {
 
             switch (choice) {
                 case "1":
-                    displayAllProducts();
+                    displayAllProducts(ds);
                     break;
                 case "2":
-                    displayAllCustomers();
+                    displayAllCustomers(ds);
                     break;
                 case "3":
-                    displayAllCategories(s);
+                    displayAllCategories(s,ds);
                     break;
                 case "0":
                     running = false;
@@ -49,11 +51,11 @@ public class Main {
         s.close();
     }
 
-    private static void displayAllProducts() {
+    private static void displayAllProducts(DataSource ds) {
         String sql = "SELECT ProductId, ProductName, UnitPrice, UnitsInStock FROM Products";
 
         System.out.println("ALL PRODUCTS");
-        try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS);
+        try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()
         ) {
@@ -73,12 +75,12 @@ public class Main {
 
     }
 
-    private static void displayAllCustomers() {
+    private static void displayAllCustomers(DataSource ds) {
         String sql = "SELECT ContactName, CompanyName, City, Country, Phone FROM Customers ORDER BY Country";
 
         System.out.println("\nAll CUSTOMERS");
         try (
-                Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS);
+                Connection conn = ds.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()
         ) {
@@ -99,12 +101,12 @@ public class Main {
         }
     }
 
-    private static void displayAllCategories(Scanner s) {
+    private static void displayAllCategories(Scanner s, DataSource ds) {
         String sql = "SELECT categoryId, categoryName FROM categories order by CategoryID";
 
         System.out.println("\nALL CATEGORIES");
         try (
-                Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS);
+                Connection conn = ds.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()
         ) {
@@ -139,7 +141,7 @@ public class Main {
 
         System.out.printf("%nProducts in Category %d %n", categoryId);
         try (
-                Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS);
+                Connection conn = ds.getConnection();
                 PreparedStatement ps2 = conn.prepareStatement(sqlProds)
         ) {
             ps2.setInt(1, categoryId);
