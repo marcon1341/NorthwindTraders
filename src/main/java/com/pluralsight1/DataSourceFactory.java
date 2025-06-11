@@ -10,7 +10,7 @@ public class DataSourceFactory {
                     + "&allowPublicKeyRetrieval=true"
                     + "&serverTimezone=UTC";
     private static final String DB_USER = "root";
-    private static final String DB_PASS = "PASSWORD";//Mysql pass
+    private static final String DB_PASS = "Msy.1341";//Mysql pass
 
     //creating datasource once
     private  static  final BasicDataSource ds = new BasicDataSource();

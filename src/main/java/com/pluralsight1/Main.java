@@ -142,10 +142,10 @@ public class Main {
         System.out.printf("%nProducts in Category %d %n", categoryId);
         try (
                 Connection conn = ds.getConnection();
-                PreparedStatement ps2 = conn.prepareStatement(sqlProds)
+                PreparedStatement ps = conn.prepareStatement(sqlProds)
         ) {
-            ps2.setInt(1, categoryId);
-            try (ResultSet rs2 = ps2.executeQuery()) {
+            ps.setInt(1, categoryId);
+            try (ResultSet rs2 = ps.executeQuery()) {
 
                 System.out.printf("%-4s  %-30s  %8s  %6s%n",
                         "ID", "Name", "Price", "Stock");
